@@ -1,9 +1,15 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useAppSelector } from '@/store/hooks';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import MobileNav from './MobileNav';
+
+// Dynamic import MobileNav - only needed on mobile
+const MobileNav = dynamic(() => import('./MobileNav'), {
+  ssr: false,
+  loading: () => null,
+});
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -20,7 +26,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <Sidebar />
         <main
           id="main-content"
-          className={`flex-1 transition-all duration-300 ${
+          className={`flex-1 md:transition-[margin] md:duration-200 ${
             isSidebarOpen ? 'md:ml-64' : 'md:ml-16'
           }`}
           tabIndex={-1}

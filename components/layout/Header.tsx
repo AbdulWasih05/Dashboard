@@ -1,15 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { FiSearch, FiSettings, FiMoon, FiSun, FiHeart, FiCloud, FiCloudRain, FiCloudSnow, FiCloudLightning } from 'react-icons/fi';
 import { WiDaySunny, WiCloudy, WiFog } from 'react-icons/wi';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { toggleSidebar, toggleMobileMenu } from '@/store/slices/uiSlice';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { useGetCurrentWeatherQuery } from '@/store/api/weatherApi';
-import SearchModal from '../search/SearchModal';
-import SettingsModal from '../settings/SettingsModal';
 import Button from '../common/Button';
+
+// Dynamic imports for modals - only loaded when needed
+const SearchModal = dynamic(() => import('../search/SearchModal'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const SettingsModal = dynamic(() => import('../settings/SettingsModal'), {
+  ssr: false,
+  loading: () => null,
+});
 
 // Weather code to icon mapping (Open-Meteo WMO codes)
 const getWeatherIcon = (code: number) => {
@@ -109,20 +119,24 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-2 pr-4">
-              {/* Time and Weather Display */}
-              {currentTime && (
-                <div className="hidden sm:flex items-center space-x-3 px-3 py-1.5 rounded-lg bg-accent/50 text-sm">
-                  <span className="font-medium">{formatTime(currentTime)}</span>
-                  {weatherData && (
-                    <div className="flex items-center space-x-1 border-l border-border pl-3">
+              {/* Time and Weather Display - fixed dimensions to prevent CLS */}
+              <div className="hidden sm:flex items-center space-x-3 px-3 py-1.5 rounded-lg bg-accent/50 text-sm min-w-[180px] h-[36px]">
+                <span className="font-medium w-[50px]">
+                  {currentTime ? formatTime(currentTime) : '\u00A0'}
+                </span>
+                <div className="flex items-center space-x-1 border-l border-border pl-3 min-w-[70px]">
+                  {weatherData ? (
+                    <>
                       {getWeatherIcon(weatherData.current_weather.weathercode)}
                       <span className="font-medium">
                         {Math.round(weatherData.current_weather.temperature)}°C
                       </span>
-                    </div>
+                    </>
+                  ) : (
+                    <span className="font-medium text-foreground/40">--°C</span>
                   )}
                 </div>
-              )}
+              </div>
 
               <Button
                 variant="ghost"
@@ -142,19 +156,17 @@ export default function Header() {
                 <FiSearch className="h-5 w-5" />
               </button>
 
-              <div className="relative">
-                <button
-                  className="p-2 rounded-lg hover:bg-accent relative"
-                  aria-label="Favorites"
-                >
-                  <FiHeart className="h-5 w-5" />
-                  {favorites.length > 0 && (
-                    <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary-500 text-xs text-white flex items-center justify-center">
-                      {favorites.length}
-                    </span>
-                  )}
-                </button>
-              </div>
+              <button
+                className="p-2 rounded-lg hover:bg-accent relative"
+                aria-label="Favorites"
+              >
+                <FiHeart className="h-5 w-5" />
+                {favorites.length > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary-500 text-xs text-white flex items-center justify-center">
+                    {favorites.length}
+                  </span>
+                )}
+              </button>
 
               <button
                 onClick={toggleTheme}

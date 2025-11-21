@@ -68,7 +68,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] border-r border-border bg-card transition-all duration-300 hidden md:block ${
+      className={`fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] border-r border-border bg-card transition-[width] duration-200 hidden md:block ${
         isSidebarOpen ? 'w-64' : 'w-16'
       }`}
       aria-label="Main navigation"
@@ -82,8 +82,8 @@ export default function Sidebar() {
               <Link
                 key={item.id}
                 href={item.href}
-                prefetch={true}
-                className={`flex items-center rounded-lg px-3 py-3 transition-colors relative group ${
+                prefetch={false}
+                className={`flex items-center rounded-lg px-3 py-3 transition-colors duration-150 relative group ${
                   isActive
                     ? 'bg-primary-500 text-white'
                     : 'text-foreground hover:bg-accent'
