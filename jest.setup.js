@@ -26,12 +26,3 @@ jest.mock('next/image', () => ({
     return <img {...props} />
   },
 }))
-
-// Mock framer-motion
-jest.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    article: ({ children, ...props }) => <article {...props}>{children}</article>,
-  },
-  AnimatePresence: ({ children }) => children,
-}))
