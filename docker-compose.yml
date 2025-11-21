@@ -14,4 +14,11 @@ services:
       - NEXT_PUBLIC_APP_NAME=Personalized Content Dashboard
       - NEXT_PUBLIC_WEATHER_API_URL=https://api.open-meteo.com/v1
       - NEXT_PUBLIC_TMDB_IMAGE_BASE=https://image.tmdb.org/t/p
+    volumes:
+      # Persist Next.js cache for faster rebuilds
+      - next-cache:/app/.next/cache
     restart: unless-stopped
+
+volumes:
+  # Named volume for Next.js build cache
+  next-cache:

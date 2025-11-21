@@ -18,6 +18,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Set environment variables for build
+ENV DOCKER_BUILD=true
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
