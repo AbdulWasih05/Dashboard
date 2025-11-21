@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { FiX, FiRefreshCw } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setCategories, setNewsCategories, setTemperatureUnit } from '@/store/slices/userSlice';
@@ -22,17 +22,60 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const widgets = useAppSelector((state) => state.dashboard.widgets);
   const favoritesCount = useAppSelector((state) => state.favorites.length);
 
+  // Refs for focus management
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousActiveElement = useRef<HTMLElement | null>(null);
+
+  // Focus trap handler
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+      return;
+    }
+
+    if (e.key === 'Tab' && modalRef.current) {
+      const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement?.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement?.focus();
+      }
+    }
+  }, [onClose]);
+
   useEffect(() => {
     if (isOpen) {
+      // Store the previously focused element
+      previousActiveElement.current = document.activeElement as HTMLElement;
       document.body.style.overflow = 'hidden';
+
+      // Focus the close button after modal opens
+      setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 100);
+
+      // Add keyboard event listener
+      document.addEventListener('keydown', handleKeyDown);
     } else {
       document.body.style.overflow = 'unset';
+
+      // Restore focus to previously focused element
+      previousActiveElement.current?.focus();
     }
 
     return () => {
       document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, handleKeyDown]);
 
   const handleMoveWidget = useCallback((dragIndex: number, hoverIndex: number) => {
     dispatch(moveWidget({ dragIndex, hoverIndex }));
@@ -92,19 +135,29 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const sortedWidgets = [...widgets].sort((a, b) => a.order - b.order);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-modal-title"
+    >
       <div
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
+        aria-hidden="true"
       />
 
-      <div className="relative w-full max-w-lg bg-gray-50 dark:bg-slate-800 rounded-lg shadow-2xl border border-border max-h-[90vh] overflow-hidden flex flex-col">
+      <div
+        ref={modalRef}
+        className="relative w-full max-w-lg bg-gray-50 dark:bg-slate-800 rounded-lg shadow-2xl border border-border max-h-[90vh] overflow-hidden flex flex-col"
+      >
         <div className="flex items-center justify-between p-6 border-b border-border flex-shrink-0">
-          <h2 className="text-2xl font-bold text-foreground">Settings</h2>
+          <h2 id="settings-modal-title" className="text-2xl font-bold text-foreground">Settings</h2>
           <button
+            ref={closeButtonRef}
             onClick={onClose}
             className="p-2 hover:bg-accent rounded-lg"
-            aria-label="Close"
+            aria-label="Close settings"
           >
             <FiX className="h-5 w-5" />
           </button>
