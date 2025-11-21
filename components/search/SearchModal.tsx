@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { FiX, FiSearch, FiFilm, FiMessageCircle } from 'react-icons/fi';
-import { MdOutlineNewspaper } from 'react-icons/md';
+import { FiX, FiSearch, FiFilm, FiMessageCircle, FiFileText } from 'react-icons/fi';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLazySearchMoviesQuery } from '@/store/api/tmdbApi';
 import { useLazySearchNewsQuery } from '@/store/api/newsApi';
@@ -108,7 +107,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
   const tabs: { id: SearchTab; label: string; icon: React.ReactNode; count: number }[] = [
     { id: 'movies', label: 'Movies', icon: <FiFilm className="h-4 w-4" />, count: moviesCount },
-    { id: 'news', label: 'News', icon: <MdOutlineNewspaper className="h-4 w-4" />, count: newsCount },
+    { id: 'news', label: 'News', icon: <FiFileText className="h-4 w-4" />, count: newsCount },
     { id: 'social', label: 'Social', icon: <FiMessageCircle className="h-4 w-4" />, count: socialCount },
   ];
 
@@ -274,7 +273,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
             {activeTab === 'news' && debouncedQuery && !newsLoading && !newsFetching && newsCount === 0 && (
               <div className="text-center py-12 text-foreground/60">
-                <MdOutlineNewspaper className="h-8 w-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
+                <FiFileText className="h-8 w-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
                 <p>No news articles found for &ldquo;{debouncedQuery}&rdquo;</p>
               </div>
             )}

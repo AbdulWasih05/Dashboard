@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 import { FiX, FiRefreshCw } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setCategories, setNewsCategories, setTemperatureUnit } from '@/store/slices/userSlice';
@@ -10,6 +10,41 @@ import { MOVIE_CATEGORIES, NEWS_CATEGORIES, TEMPERATURE_UNITS } from '@/utils/co
 import DraggableWidgetItem from './DraggableWidgetItem';
 import Button from '../common/Button';
 import toast from 'react-hot-toast';
+
+// Local DnD Provider - only loaded when SettingsModal is rendered
+function LocalDndProvider({ children }: { children: React.ReactNode }) {
+  const [isReady, setIsReady] = useState(false);
+  const dndRef = useRef<{
+    DndProvider: typeof import('react-dnd').DndProvider;
+    HTML5Backend: typeof import('react-dnd-html5-backend').HTML5Backend;
+  } | null>(null);
+
+  useEffect(() => {
+    // Dynamically import DnD only when modal is mounted
+    Promise.all([
+      import('react-dnd'),
+      import('react-dnd-html5-backend')
+    ]).then(([dnd, backend]) => {
+      dndRef.current = {
+        DndProvider: dnd.DndProvider,
+        HTML5Backend: backend.HTML5Backend
+      };
+      setIsReady(true);
+    });
+  }, []);
+
+  if (!isReady || !dndRef.current) {
+    return <>{children}</>;
+  }
+
+  const { DndProvider, HTML5Backend } = dndRef.current;
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      {children}
+    </DndProvider>
+  );
+}
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -173,17 +208,19 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               Drag to reorder widgets or toggle visibility
             </p>
 
-            <div className="space-y-2">
-              {sortedWidgets.map((widget, index) => (
-                <DraggableWidgetItem
-                  key={widget.id}
-                  widget={widget}
-                  index={index}
-                  moveWidget={handleMoveWidget}
-                  onToggleVisibility={handleToggleVisibility}
-                />
-              ))}
-            </div>
+            <LocalDndProvider>
+              <div className="space-y-2">
+                {sortedWidgets.map((widget, index) => (
+                  <DraggableWidgetItem
+                    key={widget.id}
+                    widget={widget}
+                    index={index}
+                    moveWidget={handleMoveWidget}
+                    onToggleVisibility={handleToggleVisibility}
+                  />
+                ))}
+              </div>
+            </LocalDndProvider>
 
             <button
               onClick={handleResetLayout}
