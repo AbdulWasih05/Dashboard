@@ -67,50 +67,50 @@ export default function TestPage() {
                         result.success ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300'
                       }`}
                     >
-                      {result.message}
+                      {String(result.message)}
                     </p>
 
-                    {result.details && (
+                    {result.details ? (
                       <div className="mt-4 space-y-2 text-sm">
                         <p className="text-foreground">
-                          <strong>API Key:</strong> {result.details.apiKeyPrefix}
+                          <strong>API Key:</strong> {String((result.details as Record<string, unknown>).apiKeyPrefix)}
                         </p>
                         <p className="text-foreground">
                           <strong>Movies Retrieved:</strong>{' '}
-                          {result.details.moviesRetrieved}
+                          {String((result.details as Record<string, unknown>).moviesRetrieved)}
                         </p>
-                        {result.details.sampleMovie && (
+                        {(result.details as Record<string, unknown>).sampleMovie ? (
                           <div className="mt-3 p-3 bg-background rounded border border-border">
                             <p className="font-medium text-foreground mb-1">
                               Sample Movie Retrieved:
                             </p>
                             <p className="text-foreground/80">
-                              {result.details.sampleMovie.title} (
-                              {result.details.sampleMovie.releaseDate})
+                              {String(((result.details as Record<string, unknown>).sampleMovie as Record<string, unknown>).title)} (
+                              {String(((result.details as Record<string, unknown>).sampleMovie as Record<string, unknown>).releaseDate)})
                             </p>
                             <p className="text-foreground/80">
-                              Rating: {result.details.sampleMovie.rating}/10
+                              Rating: {String(((result.details as Record<string, unknown>).sampleMovie as Record<string, unknown>).rating)}/10
                             </p>
                           </div>
-                        )}
+                        ) : null}
                       </div>
-                    )}
+                    ) : null}
 
-                    {result.error && (
+                    {result.error ? (
                       <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/30 rounded">
                         <p className="text-sm font-mono text-red-800 dark:text-red-300">
-                          {result.error}
+                          {String(result.error)}
                         </p>
                       </div>
-                    )}
+                    ) : null}
 
-                    {(result.instructions || result.nextSteps) && (
+                    {(result.instructions || result.nextSteps) ? (
                       <div className="mt-4">
                         <h3 className="font-semibold text-foreground mb-2">
                           {result.success ? 'Next Steps:' : 'Instructions:'}
                         </h3>
                         <ul className="space-y-1 text-sm text-foreground/80">
-                          {(result.instructions || result.nextSteps).map(
+                          {((result.instructions || result.nextSteps) as string[]).map(
                             (instruction: string, index: number) => (
                               <li key={index} className="flex items-start">
                                 <span className="mr-2">•</span>
@@ -120,7 +120,7 @@ export default function TestPage() {
                           )}
                         </ul>
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </div>

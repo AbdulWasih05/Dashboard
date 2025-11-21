@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const articlesWithIds = data.articles.map((article: Record<string, unknown>, index: number) => ({
       ...article,
       id: article.url
-        ? `${btoa(encodeURIComponent(article.url)).replace(/[^a-zA-Z0-9]/g, '').substring(0, 24)}-${index}`
+        ? `${btoa(encodeURIComponent(String(article.url))).replace(/[^a-zA-Z0-9]/g, '').substring(0, 24)}-${index}`
         : `news-${Date.now()}-${index}`,
     }));
 
