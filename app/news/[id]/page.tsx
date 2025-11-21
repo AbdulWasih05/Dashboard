@@ -4,8 +4,6 @@ import { use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiArrowLeft, FiHeart, FiExternalLink, FiCalendar, FiUser } from 'react-icons/fi';
-import { FaHeart } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addNewsFavorite, removeFavorite } from '@/store/slices/favoritesSlice';
 import { formatDate, isFavorited } from '@/utils/helpers';
@@ -71,11 +69,7 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
 
   return (
     <MainLayout>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-6 max-w-4xl mx-auto"
-      >
+      <div className="card-animate space-y-6 max-w-4xl mx-auto">
         {/* Back Button */}
         <Link
           href="/news"
@@ -121,17 +115,8 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
                   : 'bg-primary-500 text-white hover:bg-primary-600'
               }`}
             >
-              {isFav ? (
-                <>
-                  <FaHeart className="mr-2 h-4 w-4" />
-                  Remove from Favorites
-                </>
-              ) : (
-                <>
-                  <FiHeart className="mr-2 h-4 w-4" />
-                  Add to Favorites
-                </>
-              )}
+              <FiHeart className={`mr-2 h-4 w-4 ${isFav ? 'fill-current' : ''}`} />
+              {isFav ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
 
             <a
@@ -195,7 +180,7 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
             Visit {article.source.name}
           </a>
         </div>
-      </motion.div>
+      </div>
     </MainLayout>
   );
 }

@@ -4,8 +4,6 @@ import { use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiArrowLeft, FiHeart, FiStar, FiCalendar, FiGlobe } from 'react-icons/fi';
-import { FaHeart } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import { useGetMovieDetailsQuery } from '@/store/api/tmdbApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addFavorite, removeFavorite } from '@/store/slices/favoritesSlice';
@@ -74,11 +72,7 @@ export default function MovieDetailPage({ params }: MovieDetailPageProps) {
 
   return (
     <MainLayout>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
-      >
+      <div className="card-animate space-y-6">
         {/* Back Button */}
         <Link
           href="/movies"
@@ -157,17 +151,8 @@ export default function MovieDetailPage({ params }: MovieDetailPageProps) {
                   : 'bg-primary-500 text-white hover:bg-primary-600'
               }`}
             >
-              {isFav ? (
-                <>
-                  <FaHeart className="mr-2 h-4 w-4" />
-                  Remove from Favorites
-                </>
-              ) : (
-                <>
-                  <FiHeart className="mr-2 h-4 w-4" />
-                  Add to Favorites
-                </>
-              )}
+              <FiHeart className={`mr-2 h-4 w-4 ${isFav ? 'fill-current' : ''}`} />
+              {isFav ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
 
             {/* Overview */}
@@ -205,7 +190,7 @@ export default function MovieDetailPage({ params }: MovieDetailPageProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           </div>
         )}
-      </motion.div>
+      </div>
     </MainLayout>
   );
 }
