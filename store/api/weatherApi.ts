@@ -7,6 +7,10 @@ export const weatherApi = createApi({
     baseUrl: process.env.NEXT_PUBLIC_WEATHER_API_URL || 'https://api.open-meteo.com/v1',
   }),
   tagTypes: ['Weather'],
+  // Weather data should be kept for reasonable time
+  keepUnusedDataFor: 600,
+  // Refetch on reconnect for accurate weather
+  refetchOnReconnect: true,
   endpoints: (builder) => ({
     getCurrentWeather: builder.query<
       WeatherData,
@@ -15,8 +19,8 @@ export const weatherApi = createApi({
       query: ({ latitude, longitude }) =>
         `/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum&timezone=auto`,
       providesTags: ['Weather'],
-      // Refetch every 15 minutes
-      keepUnusedDataFor: 900,
+      // Weather updates frequently, keep for 10 minutes
+      keepUnusedDataFor: 600,
     }),
   }),
 });
