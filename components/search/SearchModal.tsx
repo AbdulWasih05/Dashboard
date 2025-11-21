@@ -127,14 +127,14 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
       aria-labelledby="search-modal-title"
     >
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50"
         onClick={onClose}
         aria-hidden="true"
       />
 
       <div
         ref={modalRef}
-        className="relative w-full max-w-4xl bg-card rounded-lg shadow-2xl border border-border max-h-[80vh] overflow-hidden flex flex-col"
+        className="relative w-full max-w-4xl bg-gray-50 dark:bg-slate-800 rounded-lg shadow-2xl border border-border max-h-[80vh] overflow-hidden flex flex-col"
       >
         {/* Aria-live region for search results announcement */}
         <div
