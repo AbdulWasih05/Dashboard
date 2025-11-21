@@ -1,7 +1,8 @@
 'use client';
 
 import { useRef } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
+import type { Identifier } from 'dnd-core';
 import { WidgetConfig } from '@/types';
 import { FiMove } from 'react-icons/fi';
 
@@ -10,6 +11,11 @@ interface DraggableWidgetItemProps {
   index: number;
   moveWidget: (dragIndex: number, hoverIndex: number) => void;
   onToggleVisibility: (widgetId: string) => void;
+}
+
+interface DragItem {
+  id: string;
+  index: number;
 }
 
 const ItemType = 'SETTINGS_WIDGET';
@@ -22,9 +28,9 @@ export default function DraggableWidgetItem({
 }: DraggableWidgetItemProps) {
   const ref = useRef<HTMLDivElement>(null);
 
-  const [{ handlerId }, drop] = useDrop({
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
     accept: ItemType,
-    collect(monitor) {
+    collect(monitor: DropTargetMonitor) {
       return {
         handlerId: monitor.getHandlerId(),
       };

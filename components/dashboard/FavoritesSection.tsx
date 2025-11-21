@@ -3,11 +3,14 @@
 import { FiHeart } from 'react-icons/fi';
 import { useAppSelector } from '@/store/hooks';
 import MovieCard from '../cards/MovieCard';
+import { Movie } from '@/types';
 
 export default function FavoritesSection() {
-  const favorites = useAppSelector((state) => state.favorites);
+  const allFavorites = useAppSelector((state) => state.favorites);
+  // Filter to only include movie favorites
+  const movieFavorites = allFavorites.filter(fav => fav.type === 'movie');
 
-  if (favorites.length === 0) {
+  if (movieFavorites.length === 0) {
     return null;
   }
 
@@ -18,14 +21,14 @@ export default function FavoritesSection() {
         <h2 className="text-2xl font-bold text-foreground">
           Your Favorites
           <span className="ml-2 text-sm font-normal text-foreground/60">
-            ({favorites.length})
+            ({movieFavorites.length})
           </span>
         </h2>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {favorites.slice(0, 10).map((favorite) => (
-          <MovieCard key={favorite.id} movie={favorite.data} />
+        {movieFavorites.slice(0, 10).map((favorite) => (
+          <MovieCard key={favorite.id} movie={favorite.data as Movie} />
         ))}
       </div>
     </section>

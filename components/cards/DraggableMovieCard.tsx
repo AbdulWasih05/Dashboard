@@ -1,7 +1,8 @@
 'use client';
 
 import { useRef } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
+import type { Identifier } from 'dnd-core';
 import { Movie } from '@/types';
 import MovieCard from './MovieCard';
 
@@ -9,6 +10,11 @@ interface DraggableMovieCardProps {
   movie: Movie;
   index: number;
   moveCard: (dragIndex: number, hoverIndex: number) => void;
+}
+
+interface DragItem {
+  id: number;
+  index: number;
 }
 
 const ItemType = 'MOVIE_CARD';
@@ -20,9 +26,9 @@ export default function DraggableMovieCard({
 }: DraggableMovieCardProps) {
   const ref = useRef<HTMLDivElement>(null);
 
-  const [{ handlerId }, drop] = useDrop({
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
     accept: ItemType,
-    collect(monitor) {
+    collect(monitor: DropTargetMonitor) {
       return {
         handlerId: monitor.getHandlerId(),
       };

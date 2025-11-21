@@ -52,10 +52,13 @@ export default function MovieCard({ movie }: MovieCardProps) {
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             onError={() => setImageError(true)}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0teleNsCAABkR25NrxAu+l5Y8TT//9k="
+            loading="lazy"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-foreground/40">
-            <span className="text-4xl">🎬</span>
+            <span className="text-4xl" aria-hidden="true">🎬</span>
           </div>
         )}
 

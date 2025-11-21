@@ -29,6 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${merriweather.variable} font-sans`}>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <ReduxProvider>
           <DndProvider>
             {children}

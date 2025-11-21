@@ -9,12 +9,16 @@ import { Movie } from '@/types';
 
 export default function DraggableFavorites() {
   const dispatch = useAppDispatch();
-  const favorites = useAppSelector((state) => state.favorites);
-  const [cards, setCards] = useState(favorites.map(fav => fav.data));
+  const allFavorites = useAppSelector((state) => state.favorites);
+  // Filter to only include movie favorites
+  const movieFavorites = allFavorites.filter(fav => fav.type === 'movie');
+  const [cards, setCards] = useState<Movie[]>(
+    movieFavorites.map(fav => fav.data as Movie)
+  );
 
   // Update local state when Redux state changes
   useState(() => {
-    setCards(favorites.map(fav => fav.data));
+    setCards(movieFavorites.map(fav => fav.data as Movie));
   });
 
   const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
@@ -24,20 +28,21 @@ export default function DraggableFavorites() {
       newCards.splice(dragIndex, 1);
       newCards.splice(hoverIndex, 0, draggedCard);
 
-      // Update Redux state with new order
-      const newFavorites = newCards.map((movie, index) => ({
+      // Update Redux state with new order (keeping non-movie favorites)
+      const nonMovieFavorites = allFavorites.filter(fav => fav.type !== 'movie');
+      const newMovieFavorites = newCards.map((movie, index) => ({
         id: String(movie.id),
         type: 'movie' as const,
         data: movie,
-        addedAt: favorites[index]?.addedAt || Date.now(),
+        addedAt: movieFavorites[index]?.addedAt || Date.now(),
       }));
-      dispatch(setFavorites(newFavorites));
+      dispatch(setFavorites([...newMovieFavorites, ...nonMovieFavorites]));
 
       return newCards;
     });
-  }, [dispatch, favorites]);
+  }, [dispatch, allFavorites, movieFavorites]);
 
-  if (favorites.length === 0) {
+  if (movieFavorites.length === 0) {
     return null;
   }
 
@@ -48,7 +53,7 @@ export default function DraggableFavorites() {
         <h2 className="text-2xl font-bold text-foreground">
           Your Favorites
           <span className="ml-2 text-sm font-normal text-foreground/60">
-            ({favorites.length}) - Drag to reorder
+            ({movieFavorites.length}) - Drag to reorder
           </span>
         </h2>
       </div>

@@ -71,8 +71,9 @@ export default function Sidebar() {
       className={`fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] border-r border-border bg-card transition-all duration-300 hidden md:block ${
         isSidebarOpen ? 'w-64' : 'w-16'
       }`}
+      aria-label="Main navigation"
     >
-      <nav className="h-full overflow-y-auto overflow-x-hidden p-2 flex flex-col">
+      <nav className="h-full overflow-y-auto overflow-x-hidden p-2 flex flex-col" role="navigation">
         <div className="space-y-1 flex-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -81,12 +82,14 @@ export default function Sidebar() {
               <Link
                 key={item.id}
                 href={item.href}
+                prefetch={true}
                 className={`flex items-center rounded-lg px-3 py-3 transition-colors relative group ${
                   isActive
                     ? 'bg-primary-500 text-white'
                     : 'text-foreground hover:bg-accent'
                 } ${isSidebarOpen ? 'justify-between' : 'justify-center'}`}
                 title={!isSidebarOpen ? item.label : undefined}
+                aria-current={isActive ? 'page' : undefined}
               >
                 <div className={`flex items-center ${isSidebarOpen ? 'space-x-3' : ''}`}>
                   <span className="flex-shrink-0">{item.icon}</span>
