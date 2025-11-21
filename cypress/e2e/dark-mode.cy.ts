@@ -1,7 +1,10 @@
 describe('Dark Mode', () => {
   beforeEach(() => {
-    cy.clearLocalStorage()
     cy.visit('/')
+  })
+
+  afterEach(() => {
+    cy.clearLocalStorage()
   })
 
   it('should toggle dark mode on and off', () => {
@@ -24,11 +27,14 @@ describe('Dark Mode', () => {
     cy.get('[aria-label="Toggle theme"]').click()
     cy.get('html').should('have.class', 'dark')
 
+    // Wait for debounced localStorage save (1000ms debounce + buffer)
+    cy.wait(1500)
+
     // Reload page
     cy.reload()
 
     // Should still be in dark mode
-    cy.get('html', { timeout: 3000 }).should('have.class', 'dark')
+    cy.get('html', { timeout: 5000 }).should('have.class', 'dark')
   })
 
   it('should show correct icon for current theme', () => {

@@ -38,13 +38,16 @@ describe('Favorites Functionality', () => {
     // Add some favorites first
     cy.contains('Trending Movies', { timeout: 10000 }).should('be.visible')
     cy.get('[aria-label="Add to favorites"]').first().click()
-    cy.wait(500)
+
+    // Wait for debounced localStorage save (1000ms debounce + buffer)
+    cy.wait(1500)
 
     // Navigate to favorites via sidebar or header
     cy.visit('/favorites')
 
     cy.contains('Your Favorites').should('be.visible')
-    cy.contains(/1 item/i).should('be.visible')
+    // The count shows as "(1 item)" or "(X items)"
+    cy.contains(/\(1 item\)/i, { timeout: 5000 }).should('be.visible')
   })
 
   it('should persist favorites after page reload', () => {

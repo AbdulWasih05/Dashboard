@@ -3,53 +3,59 @@ describe('Navigation', () => {
     cy.visit('/')
   })
 
+  // Helper to click desktop sidebar links (not mobile nav)
+  const clickSidebarLink = (text: string) => {
+    cy.get('aside[aria-label="Main navigation"]').contains('a', text).click()
+  }
+
   it('should navigate to Movies page', () => {
-    cy.contains('Movies').click()
+    clickSidebarLink('Movies')
     cy.url().should('include', '/movies')
     cy.contains('Discover trending, popular').should('be.visible')
   })
 
   it('should navigate to News page', () => {
-    cy.contains('News').click()
+    clickSidebarLink('News')
     cy.url().should('include', '/news')
     cy.contains('Latest News').should('be.visible')
   })
 
   it('should navigate to Social page', () => {
-    cy.contains('Social Feed').click()
+    clickSidebarLink('Social Feed')
     cy.url().should('include', '/social')
-    cy.contains('Social Feed').should('be.visible')
+    // Check for page heading, not sidebar link text
+    cy.get('h1').contains('Social Feed').should('be.visible')
   })
 
   it('should navigate to Weather page', () => {
-    cy.contains('Weather').click()
+    clickSidebarLink('Weather')
     cy.url().should('include', '/weather')
   })
 
   it('should navigate to Trending page', () => {
-    cy.contains('Trending').click()
+    clickSidebarLink('Trending')
     cy.url().should('include', '/trending')
   })
 
   it('should navigate to Favorites page', () => {
-    cy.contains('Favorites').click()
+    clickSidebarLink('Favorites')
     cy.url().should('include', '/favorites')
   })
 
   it('should navigate back to Dashboard', () => {
-    cy.contains('Movies').click()
+    clickSidebarLink('Movies')
     cy.url().should('include', '/movies')
 
-    cy.contains('Dashboard').click()
+    clickSidebarLink('Dashboard')
     cy.url().should('eq', Cypress.config().baseUrl + '/')
   })
 
   it('should highlight active page in sidebar', () => {
-    cy.contains('News').click()
+    clickSidebarLink('News')
 
-    cy.get('aside').within(() => {
-      cy.contains('News')
-        .parent()
+    // Target only the desktop sidebar
+    cy.get('aside[aria-label="Main navigation"]').within(() => {
+      cy.contains('a', 'News')
         .should('have.class', 'bg-primary-500')
     })
   })

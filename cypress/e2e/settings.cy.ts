@@ -6,37 +6,45 @@ describe('Settings', () => {
 
   it('should open settings modal', () => {
     cy.get('[aria-label="Settings"]').click()
-    cy.contains('Settings').should('be.visible')
-    cy.contains('Content Preferences').should('be.visible')
+    cy.contains('h2', 'Settings').should('be.visible')
+    cy.contains('Dashboard Layout').should('be.visible')
   })
 
   it('should allow toggling content categories', () => {
     cy.get('[aria-label="Settings"]').click()
 
-    // Uncheck a category
-    cy.contains('Popular').parent().find('input[type="checkbox"]').uncheck()
+    // Wait for DnD to load
+    cy.contains('Movie Categories', { timeout: 5000 }).should('be.visible')
+
+    // Click on a category label to toggle it (triggers React onChange properly)
+    cy.contains('Movie Categories')
+      .parent()
+      .find('label')
+      .first()
+      .click()
+
+    // Verify toast appears immediately after toggle
+    cy.contains(/preferences updated/i, { timeout: 3000 })
 
     cy.contains('Done').click()
-
-    // Verify toast or updated preferences
-    cy.contains(/preferences updated/i, { timeout: 3000 })
   })
 
   it('should prevent unchecking all categories', () => {
     cy.get('[aria-label="Settings"]').click()
 
-    // Try to uncheck all categories
-    cy.get('input[type="checkbox"]').each(($checkbox, index, $list) => {
-      if (index < $list.length - 1) {
-        cy.wrap($checkbox).uncheck()
-      }
-    })
+    // Wait for DnD to load
+    cy.contains('Movie Categories', { timeout: 5000 }).should('be.visible')
 
-    // Try to uncheck the last one
-    cy.get('input[type="checkbox"]:checked').last().click()
+    // Click all checked category labels to uncheck them
+    cy.contains('Movie Categories')
+      .parent()
+      .find('input[type="checkbox"]:checked')
+      .each(($checkbox) => {
+        cy.wrap($checkbox).parent('label').click()
+      })
 
-    // Should show error message
-    cy.contains(/select at least one category/i, { timeout: 3000 })
+    // Should show error message when trying to uncheck the last one
+    cy.contains(/select at least one/i, { timeout: 3000 })
   })
 
   it('should clear all favorites with confirmation', () => {
@@ -48,18 +56,21 @@ describe('Settings', () => {
     // Open settings
     cy.get('[aria-label="Settings"]').click()
 
-    // Click clear favorites
-    cy.contains('Clear All').click()
-
-    // Handle browser confirmation (stub it for testing)
+    // Stub the confirm dialog before clicking
     cy.on('window:confirm', () => true)
+
+    // Click clear favorites
+    cy.contains('button', 'Clear All').click()
+
+    // Verify toast
+    cy.contains(/favorites cleared/i, { timeout: 3000 })
   })
 
   it('should close settings modal', () => {
     cy.get('[aria-label="Settings"]').click()
-    cy.contains('Settings').should('be.visible')
+    cy.contains('h2', 'Settings').should('be.visible')
 
-    cy.get('[aria-label="Close"]').click()
-    cy.contains('Content Preferences').should('not.exist')
+    cy.get('[aria-label="Close settings"]').click()
+    cy.contains('h2', 'Settings').should('not.exist')
   })
 })

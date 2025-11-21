@@ -4,15 +4,15 @@ describe('Search Functionality', () => {
   })
 
   it('should open search modal when search button is clicked', () => {
-    cy.contains('Search').click()
-    cy.contains('Search for movies...').should('be.visible')
+    cy.contains('button', 'Search').click()
+    cy.get('input[placeholder*="Search movies"]').should('be.visible')
   })
 
   it('should perform a search and show results', () => {
-    cy.contains('Search').click()
+    cy.contains('button', 'Search').click()
 
     // Type search query
-    cy.get('input[placeholder*="Search for movies"]').type('action')
+    cy.get('input[placeholder*="Search movies"]').type('action')
 
     // Wait for debounce and results
     cy.wait(1000)
@@ -22,28 +22,27 @@ describe('Search Functionality', () => {
   })
 
   it('should show "no results" message for invalid search', () => {
-    cy.contains('Search').click()
+    cy.contains('button', 'Search').click()
 
-    cy.get('input[placeholder*="Search for movies"]').type('xyzabc123nonexistent')
+    cy.get('input[placeholder*="Search movies"]').type('xyzabc123nonexistent')
 
     cy.wait(1000)
 
-    cy.contains(/no results found/i, { timeout: 10000 }).should('be.visible')
+    // Find visible "no results" text (not in sr-only)
+    cy.get('p').contains(/no results found/i, { timeout: 10000 }).should('be.visible')
   })
 
   it('should close search modal when X button is clicked', () => {
-    cy.contains('Search').click()
-    cy.get('[aria-label="Close"]').click()
-    cy.contains('Search for movies...').should('not.exist')
+    cy.contains('button', 'Search').click()
+    cy.get('[aria-label="Close search"]').click()
+    cy.get('input[placeholder*="Search movies"]').should('not.exist')
   })
 
   it('should debounce search input', () => {
-    cy.contains('Search').click()
-
-    const input = cy.get('input[placeholder*="Search for movies"]')
+    cy.contains('button', 'Search').click()
 
     // Type multiple characters quickly
-    input.type('test', { delay: 50 })
+    cy.get('input[placeholder*="Search movies"]').type('test', { delay: 50 })
 
     // Should not search immediately
     cy.wait(300)
@@ -51,6 +50,6 @@ describe('Search Functionality', () => {
     // Wait for debounce to complete
     cy.wait(600)
 
-    // Now results or "start typing" message should be visible
+    // Now results or initial state message should be visible
   })
 })
