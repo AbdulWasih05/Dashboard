@@ -7,6 +7,7 @@ import { setPreferences, setOnboarded } from '@/store/slices/userSlice';
 import { setFavorites } from '@/store/slices/favoritesSlice';
 import { setWidgets } from '@/store/slices/dashboardSlice';
 import { STORAGE_KEYS } from '@/utils/constants';
+import debounce from 'lodash.debounce';
 
 export default function ReduxProvider({ children }: { children: React.ReactNode }) {
   const initialized = useRef(false);
@@ -40,31 +41,48 @@ export default function ReduxProvider({ children }: { children: React.ReactNode 
         console.error('Error loading from localStorage:', error);
       }
 
-      // Subscribe to store changes and save to localStorage
-      store.subscribe(() => {
+      // Track previous state for selective saving
+      let previousState = store.getState();
+
+      // Debounced save function - only saves changed data
+      const saveToStorage = debounce(() => {
         const state = store.getState();
 
         try {
-          localStorage.setItem(
-            STORAGE_KEYS.USER_PREFERENCES,
-            JSON.stringify(state.user.preferences)
-          );
-          localStorage.setItem(
-            STORAGE_KEYS.FAVORITES,
-            JSON.stringify(state.favorites)
-          );
-          localStorage.setItem(
-            STORAGE_KEYS.ONBOARDED,
-            JSON.stringify(state.user.isOnboarded)
-          );
-          localStorage.setItem(
-            STORAGE_KEYS.DASHBOARD_LAYOUT,
-            JSON.stringify(state.dashboard.widgets)
-          );
+          // Only save if data has changed
+          if (state.user.preferences !== previousState.user.preferences) {
+            localStorage.setItem(
+              STORAGE_KEYS.USER_PREFERENCES,
+              JSON.stringify(state.user.preferences)
+            );
+          }
+          if (state.favorites !== previousState.favorites) {
+            localStorage.setItem(
+              STORAGE_KEYS.FAVORITES,
+              JSON.stringify(state.favorites)
+            );
+          }
+          if (state.user.isOnboarded !== previousState.user.isOnboarded) {
+            localStorage.setItem(
+              STORAGE_KEYS.ONBOARDED,
+              JSON.stringify(state.user.isOnboarded)
+            );
+          }
+          if (state.dashboard.widgets !== previousState.dashboard.widgets) {
+            localStorage.setItem(
+              STORAGE_KEYS.DASHBOARD_LAYOUT,
+              JSON.stringify(state.dashboard.widgets)
+            );
+          }
+
+          previousState = state;
         } catch (error) {
           console.error('Error saving to localStorage:', error);
         }
-      });
+      }, 1000);
+
+      // Subscribe to store changes with debounced save
+      store.subscribe(saveToStorage);
     }
   }, []);
 
