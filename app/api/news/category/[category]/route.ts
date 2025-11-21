@@ -5,9 +5,9 @@ const NEWS_API_URL = 'https://newsapi.org/v2';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { category: string } }
+  { params }: { params: Promise<{ category: string }> }
 ) {
-  const category = params.category;
+  const { category } = await params;
   const searchParams = request.nextUrl.searchParams;
   const page = searchParams.get('page') || '1';
 
