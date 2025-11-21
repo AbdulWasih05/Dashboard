@@ -7,8 +7,8 @@ const nextConfig = {
   // Enable React strict mode for better development experience
   reactStrictMode: true,
 
-  // Enable standalone output for Docker
-  output: 'standalone',
+  // Enable standalone output only for Docker builds
+  output: process.env.DOCKER_BUILD === 'true' ? 'standalone' : undefined,
 
   // Optimize production builds
   compiler: {
@@ -21,10 +21,15 @@ const nextConfig = {
   // Experimental performance features
   experimental: {
     // Optimize package imports for better tree shaking
-    optimizePackageImports: ['react-icons', 'date-fns', 'lodash.debounce', 'framer-motion'],
+    optimizePackageImports: ['react-icons', 'date-fns', '@reduxjs/toolkit', 'react-redux'],
   },
 
   images: {
+    // Optimize image formats for faster loading
+    formats: ['image/avif', 'image/webp'],
+    // Optimize device sizes for mobile
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
     remotePatterns: [
       {
         protocol: 'https',
