@@ -1,6 +1,8 @@
 // User types
 export interface UserPreferences {
   categories: string[];
+  newsCategories: string[];
+  temperatureUnit: 'celsius' | 'fahrenheit';
   language: string;
   theme: 'light' | 'dark';
   location?: {
@@ -122,7 +124,7 @@ export interface ContentItem {
 export interface FavoriteItem {
   id: string;
   type: ContentType;
-  data: Movie;
+  data: Movie | NewsArticle;
   addedAt: number;
 }
 
@@ -131,6 +133,7 @@ export interface UIState {
   isSearchOpen: boolean;
   isSettingsOpen: boolean;
   isSidebarOpen: boolean;
+  isMobileMenuOpen: boolean;
   loading: {
     movies: boolean;
     weather: boolean;
@@ -151,10 +154,25 @@ export interface SearchState {
   error: string | null;
 }
 
+// Widget types for dashboard reordering
+export type WidgetType = 'weather' | 'trending' | 'news' | 'social';
+
+export interface WidgetConfig {
+  id: WidgetType;
+  label: string;
+  visible: boolean;
+  order: number;
+}
+
+export interface DashboardState {
+  widgets: WidgetConfig[];
+}
+
 // Redux Store
 export interface RootState {
   user: UserState;
   ui: UIState;
   favorites: FavoriteItem[];
   search: SearchState;
+  dashboard: DashboardState;
 }
