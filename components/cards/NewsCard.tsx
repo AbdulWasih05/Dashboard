@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FiExternalLink, FiClock, FiUser, FiHeart } from 'react-icons/fi';
-import { FaHeart } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import { NewsArticle } from '@/types';
 import { formatDate, isFavorited } from '@/utils/helpers';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -41,23 +40,21 @@ export default function NewsCard({ article }: NewsCardProps) {
   };
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      whileHover={{ y: -4 }}
-      className="group overflow-hidden rounded-lg bg-card border border-border shadow-lg transition-shadow hover:shadow-xl"
+    <article
+      className="card-animate group overflow-hidden rounded-lg bg-card border border-border shadow-lg transition-shadow duration-200 hover:shadow-xl"
     >
       {/* Image */}
       <div className="relative h-48 overflow-hidden bg-secondary">
         {article.urlToImage && !imageError ? (
           <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={getProxiedImageUrl(article.urlToImage)}
               alt={article.title}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              fill
+              className="object-cover md:transition-transform md:duration-200 md:group-hover:scale-105"
               onError={() => setImageError(true)}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           </>
@@ -80,27 +77,21 @@ export default function NewsCard({ article }: NewsCardProps) {
           className="absolute top-2 right-2 p-2 rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 transition-colors z-10"
           aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
         >
-          {isFav ? (
-            <FaHeart className="h-4 w-4 text-red-500" />
-          ) : (
-            <FiHeart className="h-4 w-4 text-white" />
-          )}
+          <FiHeart className={`h-4 w-4 ${isFav ? 'text-red-500 fill-red-500' : 'text-white'}`} />
         </button>
       </div>
 
       {/* Content */}
       <div className="p-4 space-y-3">
         {/* Title */}
-        <h3 className="font-bold text-foreground line-clamp-2 leading-tight" title={article.title}>
+        <h3 className="font-bold text-foreground line-clamp-2 leading-tight min-h-[2.5rem]" title={article.title}>
           {article.title}
         </h3>
 
         {/* Description */}
-        {article.description && (
-          <p className="text-sm text-foreground/70 line-clamp-3">
-            {article.description}
-          </p>
-        )}
+        <p className="text-sm text-foreground/70 line-clamp-3 min-h-[3.75rem]">
+          {article.description || '\u00A0'}
+        </p>
 
         {/* Meta information */}
         <div className="flex items-center justify-between text-xs text-foreground/60 pt-2 border-t border-border">
@@ -141,6 +132,6 @@ export default function NewsCard({ article }: NewsCardProps) {
           </div>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 }

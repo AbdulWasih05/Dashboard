@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { FiHeart, FiMessageCircle, FiShare2, FiCheckCircle } from 'react-icons/fi';
-import { motion } from 'framer-motion';
 import { SocialPost } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -24,11 +23,8 @@ export default function SocialCard({ post }: SocialCardProps) {
   const timeAgo = formatDistanceToNow(new Date(post.timestamp), { addSuffix: true });
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      className="rounded-lg bg-card border border-border p-4 shadow-md hover:shadow-lg transition-shadow"
+    <div
+      className="card-animate rounded-lg bg-card border border-border p-4 shadow-md hover:shadow-lg transition-shadow duration-200"
     >
       {/* Header */}
       <div className="flex items-start space-x-3 mb-3">
@@ -130,6 +126,6 @@ export default function SocialCard({ post }: SocialCardProps) {
           <span className="text-sm font-medium">{formatNumber(post.shares)}</span>
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

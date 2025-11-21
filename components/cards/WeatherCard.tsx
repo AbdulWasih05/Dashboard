@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { FiRefreshCw, FiAlertTriangle } from 'react-icons/fi';
 import { WeatherData } from '@/types';
 import { getWeatherInfo } from '@/utils/helpers';
@@ -100,22 +99,18 @@ export default function WeatherCard({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={`relative overflow-hidden rounded-lg bg-gradient-to-br ${gradient} p-4 md:p-6 text-white shadow-lg`}
+    <div
+      className={`card-animate relative overflow-hidden rounded-lg bg-gradient-to-br ${gradient} p-4 md:p-6 text-white shadow-lg`}
     >
       <div className="relative z-10">
         {/* Weather Alert Banner */}
         {severity && (
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+          <div
             className={`${severity.color} px-2 py-1.5 rounded-lg mb-3 flex items-center text-xs`}
           >
             <FiAlertTriangle className="mr-1.5 h-3 w-3" />
             <span className="font-medium">{severity.message}</span>
-          </motion.div>
+          </div>
         )}
 
         {/* Header with refresh */}
@@ -243,6 +238,6 @@ export default function WeatherCard({
       {/* Decorative elements */}
       <div className="absolute -right-10 -bottom-10 h-32 w-32 md:h-40 md:w-40 rounded-full bg-white/10 blur-3xl" />
       <div className="absolute -left-10 -top-10 h-32 w-32 md:h-40 md:w-40 rounded-full bg-white/10 blur-3xl" />
-    </motion.div>
+    </div>
   );
 }

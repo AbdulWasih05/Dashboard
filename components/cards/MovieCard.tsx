@@ -1,11 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiHeart, FiStar } from 'react-icons/fi';
-import { FaHeart } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import { Movie } from '@/types';
 import { getTMDBImageUrl, formatRating, truncateText, isFavorited } from '@/utils/helpers';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -14,9 +12,10 @@ import toast from 'react-hot-toast';
 
 interface MovieCardProps {
   movie: Movie;
+  priority?: boolean;
 }
 
-export default function MovieCard({ movie }: MovieCardProps) {
+function MovieCard({ movie, priority = false }: MovieCardProps) {
   const dispatch = useAppDispatch();
   const favorites = useAppSelector((state) => state.favorites);
   const [imageError, setImageError] = useState(false);
@@ -36,12 +35,8 @@ export default function MovieCard({ movie }: MovieCardProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      whileHover={{ y: -4 }}
-      className="group relative overflow-hidden rounded-lg bg-card border border-border shadow-lg transition-shadow hover:shadow-xl"
+    <div
+      className="card-animate group relative overflow-hidden rounded-lg bg-card border border-border shadow-lg transition-shadow duration-200 hover:shadow-xl"
     >
       <div className="relative aspect-[2/3] overflow-hidden bg-secondary">
         {!imageError && movie.poster_path ? (
@@ -49,12 +44,11 @@ export default function MovieCard({ movie }: MovieCardProps) {
             src={getTMDBImageUrl(movie.poster_path, 'medium')}
             alt={movie.title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover md:transition-transform md:duration-200 md:group-hover:scale-105"
             onError={() => setImageError(true)}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0teleNsCAABkR25NrxAu+l5Y8TT//9k="
-            loading="lazy"
+            priority={priority}
+            loading={priority ? 'eager' : 'lazy'}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-foreground/40">
@@ -69,11 +63,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
           className="absolute top-2 right-2 p-2 rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 transition-colors z-10"
           aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
         >
-          {isFav ? (
-            <FaHeart className="h-4 w-4 text-red-500" />
-          ) : (
-            <FiHeart className="h-4 w-4 text-white" />
-          )}
+          <FiHeart className={`h-4 w-4 ${isFav ? 'text-red-500 fill-red-500' : 'text-white'}`} />
         </button>
 
         {movie.vote_average > 0 && (
@@ -86,23 +76,19 @@ export default function MovieCard({ movie }: MovieCardProps) {
         )}
       </div>
 
-      <div className="p-3">
+      <div className="p-3 min-h-[100px]">
         <h3 className="font-semibold text-foreground line-clamp-1" title={movie.title}>
           {movie.title}
         </h3>
 
-        {movie.overview && (
-          <p className="mt-1 text-sm text-foreground/60 line-clamp-2">
-            {truncateText(movie.overview, 80)}
-          </p>
-        )}
+        <p className="mt-1 text-sm text-foreground/60 line-clamp-2 min-h-[2.5rem]">
+          {movie.overview ? truncateText(movie.overview, 80) : '\u00A0'}
+        </p>
 
         <div className="mt-3 flex items-center justify-between">
-          {movie.release_date && (
-            <p className="text-xs text-foreground/50">
-              {new Date(movie.release_date).getFullYear()}
-            </p>
-          )}
+          <p className="text-xs text-foreground/50">
+            {movie.release_date ? new Date(movie.release_date).getFullYear() : '\u00A0'}
+          </p>
           <Link
             href={`/movies/${movie.id}`}
             className="text-xs font-medium text-primary-500 hover:text-primary-600 transition-colors"
@@ -111,6 +97,8 @@ export default function MovieCard({ movie }: MovieCardProps) {
           </Link>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
+
+export default memo(MovieCard);
