@@ -12,7 +12,8 @@ import Button from '../common/Button';
 import toast from 'react-hot-toast';
 
 // Local DnD Provider - only loaded when SettingsModal is rendered
-function LocalDndProvider({ children }: { children: React.ReactNode }) {
+// Uses render prop to avoid evaluating children before DnD context is ready
+function LocalDndProvider({ children }: { children: (isReady: boolean) => React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const dndRef = useRef<{
     DndProvider: typeof import('react-dnd').DndProvider;
@@ -34,14 +35,15 @@ function LocalDndProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (!isReady || !dndRef.current) {
-    return <>{children}</>;
+    // Render children with isReady=false (they should show loading state)
+    return <>{children(false)}</>;
   }
 
   const { DndProvider, HTML5Backend } = dndRef.current;
 
   return (
     <DndProvider backend={HTML5Backend}>
-      {children}
+      {children(true)}
     </DndProvider>
   );
 }
@@ -209,17 +211,25 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </p>
 
             <LocalDndProvider>
-              <div className="space-y-2">
-                {sortedWidgets.map((widget, index) => (
-                  <DraggableWidgetItem
-                    key={widget.id}
-                    widget={widget}
-                    index={index}
-                    moveWidget={handleMoveWidget}
-                    onToggleVisibility={handleToggleVisibility}
-                  />
-                ))}
-              </div>
+              {(isReady) => isReady ? (
+                <div className="space-y-2">
+                  {sortedWidgets.map((widget, index) => (
+                    <DraggableWidgetItem
+                      key={widget.id}
+                      widget={widget}
+                      index={index}
+                      moveWidget={handleMoveWidget}
+                      onToggleVisibility={handleToggleVisibility}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-2 animate-pulse">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="h-10 bg-accent/50 rounded-lg" />
+                  ))}
+                </div>
+              )}
             </LocalDndProvider>
 
             <button

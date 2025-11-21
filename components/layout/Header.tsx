@@ -65,7 +65,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-border bg-neutral-50 dark:bg-neutral-900">
+      <header className="sticky top-0 z-50 border-b border-border bg-neutral-50 dark:bg-slate-900">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             {/* Mobile hamburger menu button */}
@@ -120,8 +120,8 @@ export default function Header() {
 
           <div className="flex items-center space-x-2 pr-4">
               {/* Time and Weather Display - fixed dimensions to prevent CLS */}
-              <div className="hidden sm:flex items-center space-x-3 px-3 py-1.5 rounded-lg bg-accent/50 text-sm min-w-[180px] h-[36px]">
-                <span className="font-medium w-[50px]">
+              <div className="hidden sm:flex items-center space-x-3 px-3 py-1.5 rounded-lg bg-accent/50 text-sm min-w-[200px] h-[36px]">
+                <span className="font-medium whitespace-nowrap">
                   {currentTime ? formatTime(currentTime) : '\u00A0'}
                 </span>
                 <div className="flex items-center space-x-1 border-l border-border pl-3 min-w-[70px]">

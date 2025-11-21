@@ -30,6 +30,12 @@ const nextConfig = {
     // Optimize device sizes for mobile
     deviceSizes: [640, 750, 828, 1080, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    // Allow local image proxy API route
+    localPatterns: [
+      {
+        pathname: '/api/**',
+      },
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -92,6 +98,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'bloximages.newyork1.vip.townnews.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.axios.com',
       },
     ],
     dangerouslyAllowSVG: true,
