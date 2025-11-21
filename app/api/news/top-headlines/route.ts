@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
 
     // Add unique IDs to articles
-    const articlesWithIds = data.articles.map((article: any, index: number) => ({
+    const articlesWithIds = data.articles.map((article: Record<string, unknown>, index: number) => ({
       ...article,
       id: article.url
         ? `${btoa(encodeURIComponent(article.url)).replace(/[^a-zA-Z0-9]/g, '').substring(0, 24)}-${index}`

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useGetTopHeadlinesQuery } from '@/store/api/newsApi';
 import NewsCard from '@/components/cards/NewsCard';
-import { SkeletonGrid } from '@/components/common/CardSkeleton';
 import Button from '@/components/common/Button';
 
 const NEWS_CATEGORIES = [

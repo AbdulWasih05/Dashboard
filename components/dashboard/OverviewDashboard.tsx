@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState, memo } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppSelector } from '@/store/hooks';
 import { useGetCurrentWeatherQuery } from '@/store/api/weatherApi';

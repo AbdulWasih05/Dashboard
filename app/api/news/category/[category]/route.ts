@@ -34,7 +34,7 @@ export async function GET(
 
     const data = await response.json();
 
-    const articlesWithIds = data.articles.map((article: any, index: number) => ({
+    const articlesWithIds = data.articles.map((article: Record<string, unknown>, index: number) => ({
       ...article,
       id: article.url ? btoa(article.url).substring(0, 16) : `news-cat-${Date.now()}-${index}`,
     }));
