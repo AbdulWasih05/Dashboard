@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Inter, Merriweather } from 'next/font/google';
 import './globals.css';
 import ReduxProvider from '@/components/providers/ReduxProvider';
@@ -38,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+
         {/* Preconnect to critical third-party origins for faster LCP */}
         <link rel="preconnect" href="https://image.tmdb.org" />
         <link rel="dns-prefetch" href="https://image.tmdb.org" />
@@ -45,6 +47,15 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://api.open-meteo.com" />
       </head>
       <body className={`${inter.variable} ${merriweather.variable} font-sans`}>
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "u9yfbz1ia5");
+          `}
+        </Script>
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>

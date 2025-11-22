@@ -24,8 +24,7 @@ This project demonstrates proficiency in modern frontend development by creating
 ## Live Demo & Submission
 
 - **GitHub Repository**: [github.com/AbdulWasih05/Personalized-Content-Dashboard](https://github.com/AbdulWasih05/Personalized-Content-Dashboard)
-- **Live Demo**: [Coming Soon - Vercel Deployment]
-- **Video Walkthrough**: [Coming Soon - Demo Video]
+- **Live Demo**: (https://personal-dashboard-nextjs.vercel.app/)
 
 ---
 
